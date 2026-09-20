@@ -32,7 +32,7 @@ const defaultTripData = {
       phone: "+886-6-2426677",
       checkIn: "2026-09-25 15:00",
       checkOut: "2026-09-26 11:00",
-      bookingRef: "1766846905 (Agoda)",
+      bookingRef: "Agoda 訂房（憑證見手機）",
       notes: "★9/25 全家 7 人皆住致穩。Business Twin 商務雙床房；含停車位、迎賓飲料、快速入住；住客代表：Aimee Guo。\n⚠️ 附件憑證只有 1 間雙人房（2 位成人），北斗組 5 人的房間需另外補訂，請盡早致電 06-242 6677 確認。",
       mapQuery: "致穩人文商旅"
     },
@@ -45,7 +45,7 @@ const defaultTripData = {
       phone: "+886-6-2950888",
       checkIn: "2026-09-26 15:00",
       checkOut: "2026-09-27 11:00",
-      bookingRef: "RBJ197934 (豪華家庭房) / SJB056326 (高級雙人房) — Klook",
+      bookingRef: "Klook 訂房：家庭房＋雙人房（憑證見手機）",
       notes: "全家 7 人共兩間房：豪華家庭房（市景・2 張雙人床）+ 高級雙人房（河景・1 張雙人床）；入住 15:00 後、退房 11:00 前；含早餐；訂房人：GUO MENG JIA。\n⚠️ 兩間房登記人數各為 2 位成人，7 人（含 2 位小孩）務必提前致電 06-295 0888 確認加床與加人費用。13:30 可先寄放行李。",
       mapQuery: "台南維悅酒店"
     }
@@ -62,7 +62,7 @@ const defaultTripData = {
       departureTime: "10:01",
       arrivalAirport: "台南站 (抵達)",
       arrivalTime: "11:45",
-      bookingRef: "04866590 (已付款未取票)",
+      bookingRef: "已付款未取票（取票代碼見 T-EX App）",
       notes: "搭乘人員：Aimee (姑姑)、Farl (姑丈)。標準車廂對號座：4車 8D、4車 8E（全票 2 張，總票價 NT$ 2,700）。抵站後由北斗組開車接人。"
     },
     {
@@ -86,7 +86,7 @@ const defaultTripData = {
       departureTime: "19:41",
       arrivalAirport: "台北站 (抵達)",
       arrivalTime: "20:44",
-      bookingRef: "04864919 (已付款未取票)",
+      bookingRef: "已付款未取票（取票代碼見 T-EX App）",
       notes: "搭乘人員：Aimee (姑姑)、Farl (姑丈)。標準車廂對號座：5車 9D、5車 9E（全票 2 張，總票價 NT$ 1,640）。車程僅 1 小時 03 分抵達台北。"
     }
   ],
@@ -118,7 +118,7 @@ const defaultTripData = {
           category: "transport",
           location: "台北車站 / 彰化北斗 ➔ 高鐵台南站",
           mapQuery: "高鐵台南站",
-          note: "【台北組 2人】Aimee、Farl 搭高鐵 1309（10:01 台北 ➔ 11:45 台南，4車 8D/8E，訂位代號 04866590）。\n【北斗組 5人】ㄚ母、ㄚ維、婉瑱、安安、睿睿 08:00 前出發——連假首日國道一號南下最塞，越早越好，約 2.5 小時，11:45 在高鐵台南站接人。",
+          note: "【台北組 2人】Aimee、Farl 搭高鐵 1309（10:01 台北 ➔ 11:45 台南，4車 8D/8E）。\n【北斗組 5人】ㄚ母、ㄚ維、婉瑱、安安、睿睿 08:00 前出發——連假首日國道一號南下最塞，越早越好，約 2.5 小時，11:45 在高鐵台南站接人。",
           cost: "NT$ 2,700 (高鐵已付)",
           completed: false,
           transitToNext: "高鐵站出發往仁德崑崙路，車程約 10 分鐘"
@@ -154,7 +154,7 @@ const defaultTripData = {
           category: "hotel",
           location: "致穩人文商旅（永康）",
           mapQuery: "致穩人文商旅",
-          note: "Agoda 1766846905，含停車位、迎賓飲料、快速入住。全家 7 人當晚都住致穩，整團一起行動不用分頭。\n⚠️ 憑證只有 1 間雙人房，北斗組的房間務必先補訂。",
+          note: "Agoda 訂房，含停車位、迎賓飲料、快速入住。全家 7 人當晚都住致穩，整團一起行動不用分頭。\n⚠️ 憑證只有 1 間雙人房，北斗組的房間務必先補訂。",
           completed: false,
           transitToNext: "步行或開車 5 分鐘到丹丹漢堡永康店"
         },
@@ -255,7 +255,7 @@ const defaultTripData = {
           category: "hotel",
           location: "台南維悅酒店",
           mapQuery: "台南維悅酒店",
-          note: "Klook RBJ197934（豪華家庭房）/ SJB056326（高級雙人房）。先寄放行李，下午回來再正式入住。\n⚠️ 提前致電 06-295 0888 確認 7 人加床與加人費用。",
+          note: "Klook 訂房：豪華家庭房＋高級雙人房。先寄放行李，下午回來再正式入住。\n⚠️ 提前致電 06-295 0888 確認 7 人加床與加人費用。",
           completed: false,
           transitToNext: "開車約 5 分鐘到安平樹屋"
         },
@@ -452,7 +452,7 @@ const defaultTripData = {
           category: "transport",
           location: "高鐵彰化站 月台",
           mapQuery: "高鐵彰化站",
-          note: "搭乘人員：Aimee (姑姑)、Farl (姑丈) 2人。訂位代號：04864919。座位 5 車 9D、5 車 9E。僅 1 小時 03 分即可抵達台北車站。",
+          note: "搭乘人員：Aimee (姑姑)、Farl (姑丈) 2人。座位 5 車 9D、5 車 9E。僅 1 小時 03 分即可抵達台北車站。",
           cost: "NT$ 1,640 (已付)",
           completed: false,
           transitToNext: "捷運或計程車溫暖賦歸"

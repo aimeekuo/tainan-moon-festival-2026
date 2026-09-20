@@ -4,8 +4,8 @@
   "description": "專為手機瀏覽與家人互動設計的 2026 中秋台南＆彰化北斗家庭旅遊行程手冊",
   "start_url": "./index.html",
   "display": "standalone",
-  "background_color": "#4f46e5",
-  "theme_color": "#4f46e5",
+  "background_color": "#606c38",
+  "theme_color": "#606c38",
   "orientation": "portrait",
   "icons": [
     {

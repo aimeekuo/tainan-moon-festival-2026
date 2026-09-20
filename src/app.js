@@ -6,14 +6,31 @@
   const STORAGE_KEY = 'family_travel_itinerary_data_v6'; // 更新 key 載入仁德十鼓＋台江主場日版
 
   const CATEGORY_MAP = {
-    attraction: { label: '景點', icon: 'map-pin', bg: 'bg-rose-50', text: 'text-rose-600', border: 'border-rose-200' },
-    food: { label: '美食', icon: 'utensils', bg: 'bg-amber-50', text: 'text-amber-700', border: 'border-amber-200' },
-    cafe: { label: '咖啡', icon: 'coffee', bg: 'bg-emerald-50', text: 'text-emerald-700', border: 'border-emerald-200' },
-    shopping: { label: '購物', icon: 'shopping-bag', bg: 'bg-purple-50', text: 'text-purple-700', border: 'border-purple-200' },
-    hotel: { label: '住宿', icon: 'bed-double', bg: 'bg-sky-50', text: 'text-sky-700', border: 'border-sky-200' },
-    transport: { label: '交通', icon: 'navigation-2', bg: 'bg-blue-50', text: 'text-blue-700', border: 'border-blue-200' },
-    activity: { label: '活動', icon: 'sparkles', bg: 'bg-pink-50', text: 'text-pink-700', border: 'border-pink-200' },
+    attraction: { label: '景點', icon: 'map-pin', bg: 'bg-copper-50', text: 'text-copper-700', border: 'border-copper-200' },
+    food: { label: '美食', icon: 'utensils', bg: 'bg-clay-100', text: 'text-clay-800', border: 'border-clay-300' },
+    cafe: { label: '咖啡', icon: 'coffee', bg: 'bg-olive-50', text: 'text-olive-700', border: 'border-olive-200' },
+    shopping: { label: '購物', icon: 'shopping-bag', bg: 'bg-forest-100', text: 'text-forest-800', border: 'border-forest-300' },
+    hotel: { label: '住宿', icon: 'bed-double', bg: 'bg-forest-50', text: 'text-forest-700', border: 'border-forest-200' },
+    transport: { label: '交通', icon: 'navigation-2', bg: 'bg-olive-100', text: 'text-olive-800', border: 'border-olive-300' },
+    activity: { label: '活動', icon: 'sparkles', bg: 'bg-clay-50', text: 'text-clay-700', border: 'border-clay-200' },
   };
+
+
+  // 橘黃資訊欄：預設收合的 <details> 元件
+  function renderNoteCollapse(text, label = '備註與提醒') {
+    const preview = String(text).split('\n')[0].replace(/<[^>]+>/g, '').slice(0, 28);
+    return `
+      <details class="note-collapse text-xs text-forest-700 bg-clay-50/70 border border-clay-200/70 rounded-xl">
+        <summary class="flex items-center gap-1.5 p-2.5 cursor-pointer select-none list-none">
+          <i data-lucide="info" class="w-3.5 h-3.5 text-clay-700 shrink-0"></i>
+          <span class="font-bold text-clay-800 shrink-0">${label}</span>
+          <span class="note-preview text-cornsilk-800 truncate flex-1">${preview}…</span>
+          <i data-lucide="chevron-down" class="note-chevron w-3.5 h-3.5 text-clay-700 shrink-0 transition-transform"></i>
+        </summary>
+        <div class="px-2.5 pb-2.5 leading-relaxed whitespace-pre-line">${text}</div>
+      </details>
+    `;
+  }
 
   let tripData = null;
   let activeTab = 'itinerary';
@@ -121,11 +138,11 @@
       const btn = document.createElement('button');
       btn.className = `shrink-0 px-3.5 py-2 rounded-2xl text-xs font-bold transition flex flex-col items-center gap-0.5 ${
         isActive
-          ? 'bg-indigo-600 text-white shadow-md shadow-indigo-200'
-          : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+          ? 'bg-olive-600 text-white shadow-md shadow-olive-200'
+          : 'bg-cornsilk-100 text-forest-700 hover:bg-cornsilk-200'
       }`;
       btn.innerHTML = `
-        <span class="text-[11px] ${isActive ? 'text-indigo-200' : 'text-slate-400'}">Day ${day.dayNumber}</span>
+        <span class="text-[11px] ${isActive ? 'text-olive-200' : 'text-cornsilk-600'}">Day ${day.dayNumber}</span>
         <span class="text-xs">${day.date.slice(5).replace('-', '/')} (${day.weekday.replace('週', '')})</span>
       `;
       btn.addEventListener('click', () => {
@@ -146,7 +163,7 @@
     document.getElementById('current-day-date').innerText = `${currentDay.date} (${currentDay.weekday})`;
     document.getElementById('current-day-theme').innerText = currentDay.theme || '行程規劃';
     document.getElementById('current-day-weather').innerHTML = `
-      <i data-lucide="sun" class="w-3.5 h-3.5 text-amber-500"></i>
+      <i data-lucide="sun" class="w-3.5 h-3.5 text-clay-500"></i>
       <span>${currentDay.weather || '晴朗'}</span>
     `;
 
@@ -155,7 +172,7 @@
 
     if (!currentDay.spots || currentDay.spots.length === 0) {
       timelineContainer.innerHTML = `
-        <div class="p-8 text-center bg-slate-50 rounded-2xl border border-dashed border-slate-200 text-slate-400 text-xs">
+        <div class="p-8 text-center bg-cornsilk-50 rounded-2xl border border-dashed border-cornsilk-200 text-cornsilk-600 text-xs">
           今天還沒有安排景點喔！點擊下方按鈕加入景點。
         </div>
       `;
@@ -180,34 +197,34 @@
       `;
 
       const card = document.createElement('div');
-      card.className = `spot-card ${spot.completed ? 'is-completed' : ''} bg-white rounded-2xl border border-slate-200/90 p-4 shadow-sm space-y-2.5 transition`;
+      card.className = `spot-card ${spot.completed ? 'is-completed' : ''} bg-white rounded-2xl border border-cornsilk-200/90 p-4 shadow-sm space-y-2.5 transition`;
 
       const headerHtml = `
         <div class="flex items-center justify-between gap-2">
           <div class="flex items-center gap-2 flex-wrap">
-            <span class="text-xs font-bold text-slate-800 tracking-tight">${spot.time || ''}</span>
+            <span class="text-xs font-bold text-forest-900 tracking-tight">${spot.time || ''}</span>
             <span class="text-[10px] font-bold px-2 py-0.5 rounded-full ${cat.bg} ${cat.text} border ${cat.border}">
               ${cat.label}
             </span>
-            ${spot.cost ? `<span class="text-[10px] text-slate-400 bg-slate-100 px-1.5 py-0.5 rounded-md">${spot.cost}</span>` : ''}
+            ${spot.cost ? `<span class="text-[10px] text-cornsilk-600 bg-cornsilk-100 px-1.5 py-0.5 rounded-md">${spot.cost}</span>` : ''}
           </div>
 
           <div class="flex items-center gap-1 shrink-0">
             ${
               isEditMode
                 ? `
-                <button class="btn-edit-spot p-1 text-slate-400 hover:text-indigo-600 rounded-lg hover:bg-slate-100" title="編輯景點" data-id="${spot.id}">
+                <button class="btn-edit-spot p-1 text-cornsilk-600 hover:text-olive-600 rounded-lg hover:bg-cornsilk-100" title="編輯景點" data-id="${spot.id}">
                   <i data-lucide="edit-2" class="w-3.5 h-3.5"></i>
                 </button>
-                <button class="btn-del-spot p-1 text-slate-400 hover:text-rose-600 rounded-lg hover:bg-slate-100" title="刪除景點" data-id="${spot.id}">
+                <button class="btn-del-spot p-1 text-cornsilk-600 hover:text-copper-600 rounded-lg hover:bg-cornsilk-100" title="刪除景點" data-id="${spot.id}">
                   <i data-lucide="trash-2" class="w-3.5 h-3.5"></i>
                 </button>
               `
                 : `
                 <button class="btn-toggle-spot-check flex items-center gap-1 text-[11px] font-semibold px-2 py-1 rounded-xl transition ${
                   spot.completed
-                    ? 'bg-emerald-50 text-emerald-600 border border-emerald-200'
-                    : 'bg-slate-100 text-slate-500 hover:bg-slate-200'
+                    ? 'bg-olive-50 text-olive-600 border border-olive-200'
+                    : 'bg-cornsilk-100 text-cornsilk-800 hover:bg-cornsilk-200'
                 }" data-id="${spot.id}">
                   <i data-lucide="${spot.completed ? 'check-circle-2' : 'circle'}" class="w-3.5 h-3.5"></i>
                   <span>${spot.completed ? '已抵達' : '標記抵達'}</span>
@@ -220,16 +237,16 @@
 
       const bodyHtml = `
         <div>
-          <h3 class="spot-title text-sm font-bold text-slate-900 leading-snug">${spot.title}</h3>
+          <h3 class="spot-title text-sm font-bold text-forest-900 leading-snug">${spot.title}</h3>
           ${
             spot.location
               ? `
             <div class="flex items-center justify-between gap-2 mt-1.5">
-              <span class="text-xs text-slate-500 flex items-center gap-1 truncate">
-                <i data-lucide="map-pin" class="w-3 h-3 text-slate-400 shrink-0"></i>
+              <span class="text-xs text-cornsilk-800 flex items-center gap-1 truncate">
+                <i data-lucide="map-pin" class="w-3 h-3 text-cornsilk-600 shrink-0"></i>
                 <span class="truncate">${spot.location}</span>
               </span>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.mapQuery || spot.location)}" target="_blank" class="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-indigo-600 bg-indigo-50 border border-indigo-200/80 px-2.5 py-1 rounded-lg hover:bg-indigo-100 active:scale-95">
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(spot.mapQuery || spot.location)}" target="_blank" class="shrink-0 inline-flex items-center gap-1 text-[11px] font-bold text-olive-600 bg-olive-50 border border-olive-200/80 px-2.5 py-1 rounded-lg hover:bg-olive-100 active:scale-95">
                 <i data-lucide="navigation" class="w-3 h-3"></i>
                 <span>導航</span>
               </a>
@@ -240,23 +257,16 @@
         </div>
       `;
 
-      const noteHtml = spot.note
-        ? `
-        <div class="text-xs text-slate-600 bg-amber-50/70 border border-amber-200/60 rounded-xl p-2.5 flex items-start gap-1.5">
-          <i data-lucide="info" class="w-3.5 h-3.5 text-amber-600 shrink-0 mt-0.5"></i>
-          <span class="leading-relaxed">${spot.note}</span>
-        </div>
-      `
-        : '';
+      const noteHtml = spot.note ? renderNoteCollapse(spot.note) : '';
 
       card.innerHTML = headerHtml + bodyHtml + noteHtml;
       spotEl.appendChild(card);
 
       if (spot.transitToNext) {
         const transitEl = document.createElement('div');
-        transitEl.className = 'my-2 ml-2 pl-3 border-l-2 border-dashed border-indigo-200 text-xs text-indigo-700 flex items-center gap-1.5 py-1';
+        transitEl.className = 'my-2 ml-2 pl-3 border-l-2 border-dashed border-olive-200 text-xs text-olive-700 flex items-center gap-1.5 py-1';
         transitEl.innerHTML = `
-          <i data-lucide="arrow-down-circle" class="w-3.5 h-3.5 text-indigo-500"></i>
+          <i data-lucide="arrow-down-circle" class="w-3.5 h-3.5 text-olive-500"></i>
           <span class="font-medium">${spot.transitToNext}</span>
         `;
         spotEl.appendChild(transitEl);
@@ -323,32 +333,32 @@
       hotelContainer.innerHTML = '';
       (tripData.accommodations || []).forEach((hotel, idx) => {
         const hCard = document.createElement('div');
-        hCard.className = 'bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3';
+        hCard.className = 'bg-white rounded-2xl border border-cornsilk-200 p-4 shadow-sm space-y-3';
         hCard.innerHTML = `
           <div class="flex items-start justify-between">
             <div>
-              <span class="text-[11px] font-bold text-sky-700 bg-sky-50 px-2 py-0.5 rounded-md border border-sky-200">
+              <span class="text-[11px] font-bold text-forest-700 bg-forest-50 px-2 py-0.5 rounded-md border border-forest-200">
                 🏨 ${idx === 0 ? '第一晚 (9/25 永康)' : '第二晚 (9/26 安平)'}
               </span>
-              <h3 class="text-base font-bold text-slate-900 mt-1.5">${hotel.name}</h3>
-              <p class="text-xs text-slate-500">${hotel.enName || ''}</p>
+              <h3 class="text-base font-bold text-forest-900 mt-1.5">${hotel.name}</h3>
+              <p class="text-xs text-cornsilk-800">${hotel.enName || ''}</p>
             </div>
-            <a href="tel:${hotel.phone.replace(/[^0-9+]/g, '')}" class="p-2.5 bg-emerald-50 text-emerald-600 rounded-full border border-emerald-200 shadow-xs hover:bg-emerald-100 active:scale-95" title="撥打電話給飯店">
+            <a href="tel:${hotel.phone.replace(/[^0-9+]/g, '')}" class="p-2.5 bg-olive-50 text-olive-600 rounded-full border border-olive-200 shadow-xs hover:bg-olive-100 active:scale-95" title="撥打電話給飯店">
               <i data-lucide="phone" class="w-4 h-4"></i>
             </a>
           </div>
 
-          <div class="p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-xs space-y-2">
+          <div class="p-3 bg-cornsilk-50 rounded-xl border border-cornsilk-200/80 text-xs space-y-2">
             <div class="flex items-start justify-between gap-2">
-              <span class="text-slate-500 shrink-0">地址：</span>
-              <span class="font-medium text-slate-800 text-right">${hotel.address}</span>
+              <span class="text-cornsilk-800 shrink-0">地址：</span>
+              <span class="font-medium text-forest-900 text-right">${hotel.address}</span>
             </div>
-            <div class="flex items-center justify-end gap-2 pt-1 border-t border-slate-200/60">
-              <button class="btn-copy-addr px-2.5 py-1 text-[11px] font-semibold text-slate-600 bg-white border border-slate-200 rounded-lg hover:bg-slate-100 flex items-center gap-1 active:scale-95" data-addr="${hotel.address}">
+            <div class="flex items-center justify-end gap-2 pt-1 border-t border-cornsilk-200/60">
+              <button class="btn-copy-addr px-2.5 py-1 text-[11px] font-semibold text-forest-700 bg-white border border-cornsilk-200 rounded-lg hover:bg-cornsilk-100 flex items-center gap-1 active:scale-95" data-addr="${hotel.address}">
                 <i data-lucide="copy" class="w-3 h-3"></i>
                 <span>複製地址</span>
               </button>
-              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.mapQuery || hotel.name)}" target="_blank" class="px-2.5 py-1 text-[11px] font-semibold text-indigo-600 bg-indigo-50 border border-indigo-200 rounded-lg hover:bg-indigo-100 flex items-center gap-1 active:scale-95">
+              <a href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(hotel.mapQuery || hotel.name)}" target="_blank" class="px-2.5 py-1 text-[11px] font-semibold text-olive-600 bg-olive-50 border border-olive-200 rounded-lg hover:bg-olive-100 flex items-center gap-1 active:scale-95">
                 <i data-lucide="navigation" class="w-3 h-3"></i>
                 <span>地圖導航</span>
               </a>
@@ -356,18 +366,16 @@
           </div>
 
           <div class="grid grid-cols-2 gap-2 text-xs">
-            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span class="text-slate-400 block text-[10px]">訂單確認編號</span>
-              <span class="font-bold text-slate-700">${hotel.bookingRef || '-'}</span>
+            <div class="p-2.5 bg-cornsilk-50 rounded-xl border border-cornsilk-100">
+              <span class="text-cornsilk-600 block text-[10px]">訂單確認編號</span>
+              <span class="font-bold text-forest-800">${hotel.bookingRef || '-'}</span>
             </div>
-            <div class="p-2.5 bg-slate-50 rounded-xl border border-slate-100">
-              <span class="text-slate-400 block text-[10px]">入住 / 退房時間</span>
-              <span class="font-bold text-slate-700">15:00 / 11:00</span>
+            <div class="p-2.5 bg-cornsilk-50 rounded-xl border border-cornsilk-100">
+              <span class="text-cornsilk-600 block text-[10px]">入住 / 退房時間</span>
+              <span class="font-bold text-forest-800">15:00 / 11:00</span>
             </div>
           </div>
-          <p class="text-xs text-slate-600 bg-amber-50/60 border border-amber-200/50 p-2.5 rounded-xl">
-            💡 ${hotel.notes || '入住時請出示訂單與全員證件'}
-          </p>
+          ${renderNoteCollapse(hotel.notes || '入住時請出示訂單與全員證件', '住宿備註與提醒')}
         `;
         hotelContainer.appendChild(hCard);
       });
@@ -386,29 +394,29 @@
     flightsContainer.innerHTML = '';
     (tripData.flights || []).forEach(f => {
       const flightEl = document.createElement('div');
-      flightEl.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200/80 text-xs space-y-2';
+      flightEl.className = 'p-3 bg-cornsilk-50 rounded-xl border border-cornsilk-200/80 text-xs space-y-2';
       flightEl.innerHTML = `
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-1.5">
-            <span class="font-bold text-indigo-700 bg-indigo-100 px-2 py-0.5 rounded-md">${f.type}</span>
-            <span class="font-black text-slate-800">${f.flightNo}</span>
+            <span class="font-bold text-olive-700 bg-olive-100 px-2 py-0.5 rounded-md">${f.type}</span>
+            <span class="font-black text-forest-900">${f.flightNo}</span>
           </div>
-          <span class="font-semibold text-slate-500">${f.date}</span>
+          <span class="font-semibold text-cornsilk-800">${f.date}</span>
         </div>
-        <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-slate-200/60">
+        <div class="grid grid-cols-2 gap-2 text-[11px] pt-1 border-t border-cornsilk-200/60">
           <div>
-            <span class="text-slate-400 block">出發 (${f.departureTime})</span>
-            <strong class="text-slate-800">${f.departureAirport}</strong>
+            <span class="text-cornsilk-600 block">出發 (${f.departureTime})</span>
+            <strong class="text-forest-900">${f.departureAirport}</strong>
           </div>
           <div>
-            <span class="text-slate-400 block">抵達 (${f.arrivalTime})</span>
-            <strong class="text-slate-800">${f.arrivalAirport}</strong>
+            <span class="text-cornsilk-600 block">抵達 (${f.arrivalTime})</span>
+            <strong class="text-forest-900">${f.arrivalAirport}</strong>
           </div>
         </div>
-        <div class="text-[11px] font-semibold text-indigo-900 bg-indigo-50/80 p-2 rounded-lg border border-indigo-100">
-          🎫 訂位代號：<span class="font-black tracking-wider text-rose-600">${f.bookingRef}</span>
+        <div class="text-[11px] font-semibold text-olive-900 bg-olive-50/80 p-2 rounded-lg border border-olive-100">
+          🎫 票券：<span class="font-bold text-copper-700">${f.bookingRef}</span>
         </div>
-        ${f.notes ? `<p class="text-[11px] text-slate-600 bg-amber-50/70 p-2 rounded-lg border border-amber-200/60">${f.notes}</p>` : ''}
+        ${f.notes ? renderNoteCollapse(f.notes, '乘車備註') : ''}
       `;
       flightsContainer.appendChild(flightEl);
     });
@@ -421,10 +429,10 @@
       item.className = 'py-2.5 flex items-center justify-between gap-2';
       item.innerHTML = `
         <div>
-          <div class="font-bold text-slate-900 text-xs">${em.title}</div>
-          <div class="text-[11px] text-slate-500">${em.note || ''}</div>
+          <div class="font-bold text-forest-900 text-xs">${em.title}</div>
+          <div class="text-[11px] text-cornsilk-800">${em.note || ''}</div>
         </div>
-        <a href="tel:${em.number.replace(/[^0-9+]/g, '')}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-xl font-bold text-xs hover:bg-rose-100 active:scale-95 shrink-0">
+        <a href="tel:${em.number.replace(/[^0-9+]/g, '')}" class="inline-flex items-center gap-1 px-3 py-1.5 bg-copper-50 text-copper-600 border border-copper-200 rounded-xl font-bold text-xs hover:bg-copper-100 active:scale-95 shrink-0">
           <i data-lucide="phone" class="w-3 h-3"></i>
           <span>${em.number}</span>
         </a>
@@ -443,25 +451,25 @@
 
     (tripData.packingCategories || []).forEach(cat => {
       const catCard = document.createElement('div');
-      catCard.className = 'bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2.5';
+      catCard.className = 'bg-white rounded-2xl border border-cornsilk-200 p-4 shadow-sm space-y-2.5';
 
       const catHeader = document.createElement('h3');
-      catHeader.className = 'text-xs font-bold text-slate-800 uppercase tracking-wider flex items-center gap-1.5';
-      catHeader.innerHTML = `<i data-lucide="folder" class="w-3.5 h-3.5 text-indigo-500"></i> ${cat.category}`;
+      catHeader.className = 'text-xs font-bold text-forest-900 uppercase tracking-wider flex items-center gap-1.5';
+      catHeader.innerHTML = `<i data-lucide="folder" class="w-3.5 h-3.5 text-olive-500"></i> ${cat.category}`;
       catCard.appendChild(catHeader);
 
       const itemsUl = document.createElement('div');
-      itemsUl.className = 'divide-y divide-slate-100 text-xs';
+      itemsUl.className = 'divide-y divide-cornsilk-100 text-xs';
 
       cat.items.forEach(item => {
         totalItems++;
         if (item.checked) checkedItems++;
 
         const row = document.createElement('label');
-        row.className = 'py-2 flex items-center justify-between cursor-pointer active:bg-slate-50 transition px-1 rounded-lg';
+        row.className = 'py-2 flex items-center justify-between cursor-pointer active:bg-cornsilk-100 transition px-1 rounded-lg';
         row.innerHTML = `
-          <span class="flex items-center gap-2.5 ${item.checked ? 'line-through text-slate-400' : 'text-slate-800 font-medium'}">
-            <input type="checkbox" ${item.checked ? 'checked' : ''} class="w-4 h-4 rounded text-indigo-600 focus:ring-indigo-500 border-slate-300">
+          <span class="flex items-center gap-2.5 ${item.checked ? 'line-through text-cornsilk-600' : 'text-forest-900 font-medium'}">
+            <input type="checkbox" ${item.checked ? 'checked' : ''} class="w-4 h-4 rounded text-olive-600 focus:ring-olive-500 border-cornsilk-300">
             <span>${item.name}</span>
           </span>
         `;
@@ -529,10 +537,10 @@
     Object.keys(memberPaidMap).forEach(m => {
       const amount = memberPaidMap[m];
       const card = document.createElement('div');
-      card.className = 'p-3 bg-slate-50 rounded-xl border border-slate-200/80';
+      card.className = 'p-3 bg-cornsilk-50 rounded-xl border border-cornsilk-200/80';
       card.innerHTML = `
-        <span class="text-slate-400 block text-[10px]">${m} 先付</span>
-        <span class="font-black text-slate-800 text-xs">${symbol}${amount.toLocaleString()}</span>
+        <span class="text-cornsilk-600 block text-[10px]">${m} 先付</span>
+        <span class="font-black text-forest-900 text-xs">${symbol}${amount.toLocaleString()}</span>
       `;
       memberContainer.appendChild(card);
     });
@@ -542,7 +550,7 @@
     historyContainer.innerHTML = '';
 
     if (!tripData.expenses || tripData.expenses.length === 0) {
-      historyContainer.innerHTML = '<p class="text-center text-slate-400 py-3">尚無記帳記錄</p>';
+      historyContainer.innerHTML = '<p class="text-center text-cornsilk-600 py-3">尚無記帳記錄</p>';
       return;
     }
 
@@ -551,15 +559,15 @@
       row.className = 'py-2.5 flex items-center justify-between gap-2';
       row.innerHTML = `
         <div>
-          <div class="font-bold text-slate-800 text-xs">${exp.title}</div>
-          <div class="text-[10px] text-slate-400 mt-0.5 flex items-center gap-1.5">
-            <span class="bg-indigo-50 text-indigo-600 px-1.5 py-0.2 rounded font-semibold">${exp.category || '一般'}</span>
+          <div class="font-bold text-forest-900 text-xs">${exp.title}</div>
+          <div class="text-[10px] text-cornsilk-600 mt-0.5 flex items-center gap-1.5">
+            <span class="bg-olive-50 text-olive-600 px-1.5 py-0.2 rounded font-semibold">${exp.category || '一般'}</span>
             <span>由 ${exp.paidBy} 支付</span>
             <span>${exp.date || ''}</span>
           </div>
         </div>
         <div class="text-right shrink-0">
-          <span class="font-black text-slate-900 text-xs block">${symbol}${Number(exp.amount).toLocaleString()}</span>
+          <span class="font-black text-forest-900 text-xs block">${symbol}${Number(exp.amount).toLocaleString()}</span>
         </div>
       `;
       historyContainer.appendChild(row);
@@ -645,11 +653,11 @@
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
       const t = btn.getAttribute('data-tab');
       if (t === tabName) {
-        btn.classList.add('text-indigo-600', 'font-bold');
-        btn.classList.remove('text-slate-400', 'font-medium');
+        btn.classList.add('text-olive-600', 'font-bold');
+        btn.classList.remove('text-cornsilk-600', 'font-medium');
       } else {
-        btn.classList.remove('text-indigo-600', 'font-bold');
-        btn.classList.add('text-slate-400', 'font-medium');
+        btn.classList.remove('text-olive-600', 'font-bold');
+        btn.classList.add('text-cornsilk-600', 'font-medium');
       }
     });
 
@@ -688,7 +696,7 @@
         correctLevel: QRCode.CorrectLevel.L
       });
     } catch (e) {
-      qrcodeBox.innerHTML = '<p class="text-xs text-slate-400">QR Code 產生失敗，請複製連結。</p>';
+      qrcodeBox.innerHTML = '<p class="text-xs text-cornsilk-600">QR Code 產生失敗，請複製連結。</p>';
     }
 
     refreshIcons();
@@ -928,7 +936,7 @@
 
     const toast = document.createElement('div');
     toast.id = 'app-toast';
-    toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-slate-900/90 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg backdrop-blur-md transition-all duration-200 pointer-events-none';
+    toast.className = 'fixed top-5 left-1/2 -translate-x-1/2 z-50 bg-forest-900/90 text-white text-xs font-semibold px-4 py-2.5 rounded-full shadow-lg backdrop-blur-md transition-all duration-200 pointer-events-none';
     toast.innerText = message;
     document.body.appendChild(toast);
 

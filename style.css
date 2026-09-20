@@ -43,7 +43,7 @@ input, textarea, select {
   top: 36px;
   bottom: -20px;
   width: 2px;
-  background: linear-gradient(to bottom, #cbd5e1 0%, #e2e8f0 100%);
+  background: linear-gradient(to bottom, #c9c8b0 0%, #dbd8c0 100%);
   z-index: 1;
 }
 
@@ -63,17 +63,17 @@ input, textarea, select {
 .spot-card.is-completed {
   opacity: 0.72;
   filter: grayscale(0.2);
-  background-color: #f8fafc;
+  background-color: #f7f4e4;
 }
 
 .spot-card.is-completed .spot-title {
   text-decoration: line-through;
-  color: #64748b;
+  color: #838471;
 }
 
 /* 漸層文字 */
 .text-gradient {
-  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #8b5cf6 100%);
+  background: linear-gradient(135deg, #606c38 0%, #bc6c25 50%, #dda15e 100%);
   -webkit-background-clip: text;
   -webkit-text-fill-color: transparent;
 }
@@ -87,4 +87,15 @@ input, textarea, select {
 /* 按鈕點擊漣漪/縮放 */
 .btn-press:active {
   transform: scale(0.95);
+}
+
+/* 資訊欄 Collapse 元件 */
+.note-collapse summary::-webkit-details-marker {
+  display: none;
+}
+.note-collapse[open] .note-chevron {
+  transform: rotate(180deg);
+}
+.note-collapse[open] .note-preview {
+  display: none;
 }
