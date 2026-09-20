@@ -1,0 +1,8 @@
+# 訂房憑證、車票截圖等個人資料，不上傳公開 repo
+2026-09 Moon Festival/
+*.pdf
+*.PNG
+*.png
+__pycache__/
+.DS_Store
+.claude/

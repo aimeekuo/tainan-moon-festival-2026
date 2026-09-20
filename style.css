@@ -1,0 +1,90 @@
+/* 行動裝置優化與通用樣式 */
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Noto+Sans+TC:wght@400;500;700;900&display=swap');
+
+:root {
+  --safe-top: env(safe-area-inset-top, 0px);
+  --safe-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', 'Noto Sans TC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  -webkit-tap-highlight-color: transparent;
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+input, textarea, select {
+  user-select: text;
+  -webkit-user-select: text;
+}
+
+/* 隱藏原生捲軸但保留平滑滾動 */
+.no-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+.no-scrollbar {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+/* iOS 底部導航安全區域 */
+.safe-bottom-padding {
+  padding-bottom: calc(72px + var(--safe-bottom));
+}
+
+.safe-bottom-bar {
+  padding-bottom: var(--safe-bottom);
+}
+
+/* 時間軸垂直線樣式 */
+.timeline-stem {
+  position: absolute;
+  left: 20px;
+  top: 36px;
+  bottom: -20px;
+  width: 2px;
+  background: linear-gradient(to bottom, #cbd5e1 0%, #e2e8f0 100%);
+  z-index: 1;
+}
+
+.timeline-item:last-child .timeline-stem {
+  display: none;
+}
+
+/* 卡片微互動 */
+.touch-card {
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.touch-card:active {
+  transform: scale(0.985);
+}
+
+/* 完成狀態樣式 */
+.spot-card.is-completed {
+  opacity: 0.72;
+  filter: grayscale(0.2);
+  background-color: #f8fafc;
+}
+
+.spot-card.is-completed .spot-title {
+  text-decoration: line-through;
+  color: #64748b;
+}
+
+/* 漸層文字 */
+.text-gradient {
+  background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #8b5cf6 100%);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+/* 彈窗淡入淡出 */
+.modal-backdrop {
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+}
+
+/* 按鈕點擊漣漪/縮放 */
+.btn-press:active {
+  transform: scale(0.95);
+}

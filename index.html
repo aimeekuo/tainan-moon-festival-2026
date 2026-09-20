@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="theme-color" content="#4f46e5">
+  <title>2026 中秋返鄉與台南漫步之旅 4D3N | 旅遊行程小幫手</title>
+  
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            brand: {
+              50: '#eef2ff',
+              100: '#e0e7ff',
+              500: '#6366f1',
+              600: '#4f46e5',
+              700: '#4338ca',
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <!-- Canvas Confetti for celebrations -->
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.9.3/dist/confetti.browser.min.js"></script>
+  <!-- QRCode.js for family QR sharing -->
+  <script src="https://cdn.jsdelivr.net/npm/qrcodejs@1.0.0/qrcode.min.js"></script>
+  <!-- LZString for compact URL encoding -->
+  <script src="https://cdn.jsdelivr.net/npm/lz-string@1.5.0/libs/lz-string.min.js"></script>
+
+  <link rel="stylesheet" href="style.css">
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800 antialiased">
+
+  <!-- 主容器 (手機寬度最適化，電腦端置中預覽) -->
+  <div class="max-w-md mx-auto min-h-screen bg-white shadow-2xl relative flex flex-col safe-bottom-padding">
+    
+    <!-- 頂部 Header 橫幅 -->
+    <header class="relative bg-gradient-to-br from-indigo-700 via-purple-600 to-amber-500 text-white p-5 pt-8 pb-6 shadow-md">
+      <!-- 頂部小功能列 -->
+      <div class="flex items-center justify-between mb-3">
+        <div class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/20 backdrop-blur-md text-xs font-semibold tracking-wide border border-white/20">
+          <i data-lucide="sparkles" class="w-3.5 h-3.5 text-amber-300"></i>
+          <span id="trip-countdown">計算天數中...</span>
+        </div>
+        <div class="flex items-center gap-1.5">
+          <!-- 編輯模式切換 -->
+          <button id="btn-toggle-edit" class="p-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white transition active:scale-95 text-xs flex items-center gap-1 px-2.5" title="切換編輯模式">
+            <i data-lucide="edit-3" class="w-3.5 h-3.5"></i>
+            <span id="edit-mode-text">編輯</span>
+          </button>
+          <!-- 分享與 QR 按鈕 -->
+          <button id="btn-open-share" class="p-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white transition active:scale-95" title="分享給同行家人">
+            <i data-lucide="share-2" class="w-4 h-4"></i>
+          </button>
+          <!-- 設定/重設 -->
+          <button id="btn-open-settings" class="p-2 rounded-full bg-white/20 hover:bg-white/30 backdrop-blur-md text-white transition active:scale-95" title="行程設定與匯入匯出">
+            <i data-lucide="settings" class="w-4 h-4"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- 行程大標題 -->
+      <h1 id="trip-title" class="text-2xl font-black tracking-tight leading-snug drop-shadow-sm">
+        🌕 2026 中秋返鄉與台南漫步之旅 4D3N
+      </h1>
+      
+      <!-- 目的地與日期標註 -->
+      <div class="flex flex-wrap items-center gap-y-1 gap-x-3 mt-2 text-xs font-medium text-white/90">
+        <span class="flex items-center gap-1">
+          <i data-lucide="map-pin" class="w-3.5 h-3.5 text-amber-300"></i>
+          <span id="trip-destination">台灣 台南 & 彰化北斗</span>
+        </span>
+        <span class="flex items-center gap-1">
+          <i data-lucide="calendar" class="w-3.5 h-3.5 text-indigo-200"></i>
+          <span id="trip-dates">2026/09/25 - 09/28</span>
+        </span>
+        <span class="flex items-center gap-1">
+          <i data-lucide="users" class="w-3.5 h-3.5 text-rose-200"></i>
+          <span id="trip-members-badge">2 位同行</span>
+        </span>
+      </div>
+
+      <!-- 編輯模式提示條（預設隱藏） -->
+      <div id="edit-mode-banner" class="hidden mt-3 p-2 bg-amber-400 text-amber-950 rounded-xl text-xs font-bold flex items-center justify-between shadow-sm">
+        <span class="flex items-center gap-1.5">
+          <i data-lucide="alert-circle" class="w-4 h-4"></i>
+          目前處於編輯模式，可新增/修改景點與花費
+        </span>
+        <button id="btn-finish-edit" class="bg-amber-950 text-white px-2.5 py-1 rounded-lg text-[11px]">完成</button>
+      </div>
+    </header>
+
+    <!-- 每日切換選單 (僅在行程分頁顯示) -->
+    <div id="day-selector-container" class="sticky top-0 z-20 bg-white/95 backdrop-blur-md border-b border-slate-200 px-4 py-3">
+      <div id="day-tabs" class="flex items-center gap-2 overflow-x-auto no-scrollbar py-0.5">
+        <!-- 動態產生 Day 1, Day 2, Day 3, Day 4 -->
+      </div>
+    </div>
+
+    <!-- 主要內容分頁區塊 -->
+    <main class="flex-1 p-4">
+
+      <!-- ================= TAB 1: 每日行程時間軸 ================= -->
+      <section id="tab-content-itinerary" class="tab-content space-y-4">
+        <!-- 當日主題卡片 -->
+        <div id="day-theme-card" class="bg-gradient-to-r from-slate-50 to-indigo-50/40 p-3.5 rounded-2xl border border-indigo-100/80 shadow-sm flex items-center justify-between">
+          <div>
+            <div class="flex items-center gap-2">
+              <span id="current-day-label" class="text-xs font-bold text-indigo-600 bg-indigo-100 px-2 py-0.5 rounded-md">Day 1</span>
+              <span id="current-day-date" class="text-xs font-medium text-slate-500">09/25 (週五)</span>
+            </div>
+            <h2 id="current-day-theme" class="text-sm font-bold text-slate-800 mt-1">台北搭高鐵出發・抵達台南・入住致穩</h2>
+          </div>
+          <div id="current-day-weather" class="flex items-center gap-1 text-xs font-semibold text-amber-600 bg-amber-50 border border-amber-200 px-2.5 py-1 rounded-xl shadow-xs">
+            <i data-lucide="sun" class="w-4 h-4 text-amber-500"></i>
+            <span>29°C 晴</span>
+          </div>
+        </div>
+
+        <!-- 景點時間軸清單 -->
+        <div id="timeline-list" class="space-y-4 relative">
+          <!-- 動態由 JavaScript 產生景點卡片與路線連線 -->
+        </div>
+
+        <!-- 新增景點按鈕 -->
+        <div class="pt-2">
+          <button id="btn-add-spot" class="w-full py-3.5 rounded-2xl border-2 border-dashed border-indigo-300 text-indigo-600 hover:bg-indigo-50/50 font-bold text-sm flex items-center justify-center gap-2 transition active:scale-[0.99]">
+            <i data-lucide="plus-circle" class="w-4 h-4"></i>
+            <span>為今日新增景點或活動</span>
+          </button>
+        </div>
+      </section>
+
+      <!-- ================= TAB 2: 重要實用資訊速查 ================= -->
+      <section id="tab-content-info" class="tab-content hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+            <i data-lucide="info" class="w-5 h-5 text-indigo-600"></i>
+            家人實用速查手冊
+          </h2>
+          <span class="text-xs text-slate-500">訂房代號・高鐵座位・電話</span>
+        </div>
+
+        <!-- 同行人員與出發分工卡片 -->
+        <div class="bg-gradient-to-br from-indigo-50 to-purple-50 rounded-2xl border border-indigo-100 p-4 shadow-sm space-y-3">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-indigo-700 bg-white px-2 py-0.5 rounded-md border border-indigo-200 flex items-center gap-1 shadow-2xs">
+              <i data-lucide="users" class="w-3.5 h-3.5 text-indigo-600"></i>
+              同行家人與出發分工 (共 7 位)
+            </span>
+            <span class="text-[11px] font-semibold text-indigo-600">中秋府城相聚</span>
+          </div>
+
+          <div class="space-y-2 text-xs">
+            <!-- 台北組 -->
+            <div class="p-2.5 bg-white/95 rounded-xl border border-indigo-100/80 space-y-1">
+              <div class="flex items-center justify-between font-bold text-slate-800">
+                <span class="flex items-center gap-1.5 text-indigo-700">
+                  <i data-lucide="train" class="w-3.5 h-3.5"></i>
+                  台北高鐵組 (2 人)
+                </span>
+                <span class="text-[11px] font-normal text-slate-500">9/25 高鐵直達台南</span>
+              </div>
+              <p class="text-slate-700 font-semibold">Aimee (姑姑)、Farl (姑丈)</p>
+              <p class="text-[11px] text-slate-500">去程 1309 車次 (4車 8D/8E) ； 9/28 彰化高鐵 1326 車次返北</p>
+            </div>
+
+            <!-- 北斗組 -->
+            <div class="p-2.5 bg-white/95 rounded-xl border border-purple-100/80 space-y-1">
+              <div class="flex items-center justify-between font-bold text-slate-800">
+                <span class="flex items-center gap-1.5 text-purple-700">
+                  <i data-lucide="car" class="w-3.5 h-3.5"></i>
+                  北斗自駕組 (5 人)
+                </span>
+                <span class="text-[11px] font-normal text-slate-500">9/25 開車出發台南</span>
+              </div>
+              <p class="text-slate-700 font-semibold">ㄚ母 (名莉)、ㄚ維 (展維)、婉瑱、安安、睿睿</p>
+              <p class="text-[11px] text-slate-500">9/25 台南大會合；9/27 一行 7 人一同開車返北斗老家過中秋烤肉！</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- 飯店住宿資訊卡容器 (動態載入致穩商旅 + 維悅酒店) -->
+        <div id="hotel-card-container" class="space-y-4">
+          <!-- 動態載入 -->
+        </div>
+
+        <!-- 高鐵車票與座位資訊卡 -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+          <span class="text-[11px] font-bold text-indigo-700 bg-indigo-50 px-2 py-0.5 rounded-md border border-indigo-200 flex items-center gap-1">
+            <i data-lucide="train" class="w-3.5 h-3.5 text-indigo-600"></i>
+            台灣高鐵車次與座位憑證
+          </span>
+          <div id="flights-list" class="space-y-2.5">
+            <!-- 動態填入去程與回程高鐵 -->
+          </div>
+        </div>
+
+        <!-- 緊急聯絡電話一覽 -->
+        <div class="bg-white rounded-2xl border border-rose-200/80 p-4 shadow-sm space-y-3 bg-gradient-to-b from-rose-50/30 to-white">
+          <div class="flex items-center justify-between">
+            <span class="text-[11px] font-bold text-rose-700 bg-rose-100 px-2 py-0.5 rounded-md border border-rose-200 flex items-center gap-1">
+              <i data-lucide="phone-call" class="w-3 h-3 text-rose-600"></i>
+              重要與緊急聯絡電話
+            </span>
+            <span class="text-[10px] text-rose-500">點擊電話直接撥出</span>
+          </div>
+
+          <div id="emergency-list" class="divide-y divide-rose-100 text-xs">
+            <!-- 動態填入電話清單 -->
+          </div>
+        </div>
+
+        <!-- 旅程備忘提醒 -->
+        <div class="bg-slate-50 rounded-2xl border border-slate-200 p-4 text-xs space-y-2 text-slate-600">
+          <h4 class="font-bold text-slate-800 flex items-center gap-1.5">
+            <i data-lucide="lightbulb" class="w-4 h-4 text-amber-500"></i>
+            中秋旅程貼心提醒
+          </h4>
+          <ul class="list-disc pl-4 space-y-1 text-slate-600 leading-relaxed text-[11px]">
+            <li><strong>高鐵取票</strong>：去程 (04866590) 與回程 (04864919) 皆為已付款未取票，發車前可於 T-EX 行動購票 App 直接下載手機車票或至車站自動售票機領取。</li>
+            <li><strong>台南維悅酒店</strong>：入住時請向櫃台出示 Klook 憑證代號（家庭房：RBJ197934、河景雙人房：SJB056326）。</li>
+            <li><strong>北斗伴手禮</strong>：老家伴手禮與在地肉圓冷藏外帶，請記得準備保冷袋裝箱。</li>
+          </ul>
+        </div>
+      </section>
+
+      <!-- ================= TAB 3: 行李與準備清單 ================= -->
+      <section id="tab-content-packing" class="tab-content hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="check-square" class="w-5 h-5 text-indigo-600"></i>
+              行李與裝備準備清單
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">健保卡、充電線、防蚊液、伴手禮確認</p>
+          </div>
+          <button id="btn-add-packing-item" class="p-2 bg-indigo-50 text-indigo-600 rounded-xl border border-indigo-200 hover:bg-indigo-100 active:scale-95 text-xs font-bold flex items-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>新增</span>
+          </button>
+        </div>
+
+        <!-- 準備進度條卡片 -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-2">
+          <div class="flex justify-between text-xs font-bold text-slate-700">
+            <span>整體準備進度</span>
+            <span id="packing-progress-text" class="text-indigo-600">0% (0/0)</span>
+          </div>
+          <div class="w-full bg-slate-100 rounded-full h-2.5 overflow-hidden">
+            <div id="packing-progress-bar" class="bg-gradient-to-r from-indigo-500 to-emerald-500 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+          </div>
+        </div>
+
+        <!-- 行李分類清單容器 -->
+        <div id="packing-categories-list" class="space-y-3">
+          <!-- 動態載入分類與打勾清單 -->
+        </div>
+      </section>
+
+      <!-- ================= TAB 4: 支出記帳與分攤 ================= -->
+      <section id="tab-content-expenses" class="tab-content hidden space-y-4">
+        <div class="flex items-center justify-between">
+          <div>
+            <h2 class="text-lg font-bold text-slate-900 flex items-center gap-2">
+              <i data-lucide="receipt" class="w-5 h-5 text-indigo-600"></i>
+              行程公費記帳
+            </h2>
+            <p class="text-xs text-slate-500 mt-0.5">高鐵、住宿與餐飲花費隨手記</p>
+          </div>
+          <button id="btn-add-expense" class="px-3 py-1.5 bg-indigo-600 text-white rounded-xl shadow-sm hover:bg-indigo-700 active:scale-95 text-xs font-bold flex items-center gap-1">
+            <i data-lucide="plus" class="w-3.5 h-3.5"></i>
+            <span>記一筆</span>
+          </button>
+        </div>
+
+        <!-- 支出總覽卡片 -->
+        <div class="bg-gradient-to-br from-slate-900 to-indigo-950 text-white rounded-2xl p-4 shadow-md space-y-3">
+          <span class="text-[11px] font-semibold text-indigo-300 tracking-wider uppercase">累積總花費</span>
+          <div class="flex items-baseline justify-between">
+            <div>
+              <span class="text-3xl font-black text-white" id="total-expense-foreign">NT$0</span>
+              <span class="text-xs text-slate-400 ml-1.5">(新台幣)</span>
+            </div>
+            <div class="text-right">
+              <span class="text-sm font-bold text-amber-300" id="total-expense-home">已付高鐵與住宿</span>
+            </div>
+          </div>
+          <div class="pt-2 border-t border-white/10 flex justify-between items-center text-xs text-slate-300">
+            <span>每人平均分攤：</span>
+            <span id="per-person-cost" class="font-bold text-white">NT$0</span>
+          </div>
+        </div>
+
+        <!-- 家人各自代墊統整 -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">誰先付了多少錢？</h3>
+          <div id="expense-by-member" class="grid grid-cols-2 gap-2 text-xs">
+            <!-- 動態填入代墊總額 -->
+          </div>
+        </div>
+
+        <!-- 支出明細清單 -->
+        <div class="bg-white rounded-2xl border border-slate-200 p-4 shadow-sm space-y-3">
+          <h3 class="text-xs font-bold text-slate-700 uppercase tracking-wider">支出明細歷程</h3>
+          <div id="expenses-history-list" class="divide-y divide-slate-100 text-xs">
+            <!-- 動態載入每一筆花費 -->
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- 底部導航欄 (Fixed Safe Bottom Navigation) -->
+    <nav class="fixed bottom-0 left-0 right-0 max-w-md mx-auto bg-white/95 backdrop-blur-lg border-t border-slate-200 z-30 safe-bottom-bar shadow-[0_-4px_16px_rgba(0,0,0,0.06)]">
+      <div class="grid grid-cols-4 h-16">
+        <!-- TAB 1: 行程 -->
+        <button data-tab="itinerary" class="nav-tab-btn flex flex-col items-center justify-center text-indigo-600 font-bold transition active:scale-95">
+          <i data-lucide="calendar-days" class="w-5 h-5"></i>
+          <span class="text-[10px] mt-1">行程</span>
+        </button>
+        <!-- TAB 2: 速查 -->
+        <button data-tab="info" class="nav-tab-btn flex flex-col items-center justify-center text-slate-400 font-medium transition active:scale-95">
+          <i data-lucide="info" class="w-5 h-5"></i>
+          <span class="text-[10px] mt-1">速查</span>
+        </button>
+        <!-- TAB 3: 行李 -->
+        <button data-tab="packing" class="nav-tab-btn flex flex-col items-center justify-center text-slate-400 font-medium transition active:scale-95 relative">
+          <i data-lucide="check-square" class="w-5 h-5"></i>
+          <span class="text-[10px] mt-1">行李</span>
+          <span id="packing-badge" class="hidden absolute top-2 right-6 w-2 h-2 bg-rose-500 rounded-full ring-2 ring-white"></span>
+        </button>
+        <!-- TAB 4: 記帳 -->
+        <button data-tab="expenses" class="nav-tab-btn flex flex-col items-center justify-center text-slate-400 font-medium transition active:scale-95">
+          <i data-lucide="receipt" class="w-5 h-5"></i>
+          <span class="text-[10px] mt-1">記帳</span>
+        </button>
+      </div>
+    </nav>
+
+    <!-- ================= MODALS 互動彈窗 ================= -->
+
+    <!-- 1. 分享與 QR Code 彈窗 -->
+    <div id="modal-share" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 modal-backdrop">
+      <div class="bg-white rounded-3xl p-5 max-w-sm w-full space-y-4 shadow-2xl animate-in fade-in zoom-in duration-150">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
+            <i data-lucide="share-2" class="w-4 h-4 text-indigo-600"></i>
+            分享行程給家人
+          </h3>
+          <button class="btn-close-modal p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-slate-500 leading-relaxed">
+          讓同行家人用手機相機掃描下方 QR Code，或直接複製連結發送至 LINE，即可在手機上隨時查看行程！
+        </p>
+
+        <div class="flex flex-col items-center justify-center p-4 bg-slate-50 rounded-2xl border border-slate-200">
+          <div id="qrcode-box" class="p-2 bg-white rounded-xl shadow-xs"></div>
+          <span class="text-[11px] text-slate-400 mt-2">手機相機直接掃描即可查看</span>
+        </div>
+
+        <button id="btn-copy-share-link" class="w-full py-3 bg-indigo-600 text-white rounded-xl font-bold text-xs flex items-center justify-center gap-2 hover:bg-indigo-700 active:scale-95 shadow-sm">
+          <i data-lucide="link" class="w-4 h-4"></i>
+          <span id="copy-link-text">複製專屬分享連結</span>
+        </button>
+
+        <div class="pt-2 border-t border-slate-100 flex items-center justify-between text-xs text-slate-400">
+          <span>亦支援匯出 JSON 備份檔案</span>
+          <button id="btn-export-json" class="text-indigo-600 font-semibold hover:underline">下載備份檔</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 2. 新增/編輯景點彈窗 -->
+    <div id="modal-spot" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 modal-backdrop overflow-y-auto">
+      <div class="bg-white rounded-3xl p-5 max-w-sm w-full space-y-3 shadow-2xl my-auto">
+        <div class="flex items-center justify-between">
+          <h3 id="modal-spot-title" class="text-base font-bold text-slate-900">新增行程景點</h3>
+          <button class="btn-close-modal p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <form id="form-spot" class="space-y-3 text-xs">
+          <input type="hidden" id="spot-edit-id" value="">
+          
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">第幾天</label>
+              <select id="spot-day-select" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium"></select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">時間區間</label>
+              <input type="text" id="spot-time" placeholder="例: 12:30 - 14:00" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">景點 / 活動名稱</label>
+            <input type="text" id="spot-title-input" required placeholder="例: 文章牛肉湯 / 安平老街" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">類別分類</label>
+              <select id="spot-category" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                <option value="attraction">⛩️ 景點名勝</option>
+                <option value="food">🍜 美食餐廳</option>
+                <option value="cafe">☕ 咖啡甜點</option>
+                <option value="shopping">🛍️ 逛街購物</option>
+                <option value="hotel">🏨 飯店住宿</option>
+                <option value="transport">🚇 交通乘車</option>
+                <option value="activity">✨ 特殊活動</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">費用資訊</label>
+              <input type="text" id="spot-cost" placeholder="例: 免費 / NT$ 300" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+            </div>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">地點 / Google Maps 搜尋關鍵字</label>
+            <input type="text" id="spot-map-query" placeholder="例: 文章牛肉湯 (供點擊導航)" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">備忘筆記 / 貼心提醒</label>
+            <textarea id="spot-notes" rows="2" placeholder="例: 停車方便、排隊約15分..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium"></textarea>
+          </div>
+
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">接續下一站的交通方式</label>
+            <input type="text" id="spot-transit" placeholder="例: 開車約 15 分鐘" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+          </div>
+
+          <div class="pt-2 flex gap-2">
+            <button type="button" class="btn-close-modal flex-1 py-2.5 bg-slate-100 text-slate-700 rounded-xl font-bold">取消</button>
+            <button type="submit" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-sm hover:bg-indigo-700">儲存景點</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 3. 新增花費記帳彈窗 -->
+    <div id="modal-expense" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 modal-backdrop">
+      <div class="bg-white rounded-3xl p-5 max-w-sm w-full space-y-3 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-slate-900">記錄一筆公費花費</h3>
+          <button class="btn-close-modal p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <form id="form-expense" class="space-y-3 text-xs">
+          <div>
+            <label class="block font-semibold text-slate-700 mb-1">支出項目名稱</label>
+            <input type="text" id="expense-title" required placeholder="例: 台南小吃、伴手禮、加油..." class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">金額 (NT$ 新台幣)</label>
+              <input type="number" id="expense-amount" required placeholder="例: 1200" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">誰先代墊付款？</label>
+              <select id="expense-paid-by" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium"></select>
+            </div>
+          </div>
+
+          <div class="grid grid-cols-2 gap-2">
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">分類</label>
+              <select id="expense-category" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+                <option value="餐飲">🍜 餐飲美食</option>
+                <option value="交通">🚇 高鐵交通</option>
+                <option value="門票">🎟️ 門票活動</option>
+                <option value="住宿">🏨 飯店住宿</option>
+                <option value="伴手禮">🛍️ 伴手禮雜支</option>
+              </select>
+            </div>
+            <div>
+              <label class="block font-semibold text-slate-700 mb-1">日期</label>
+              <input type="date" id="expense-date" class="w-full p-2.5 bg-slate-50 border border-slate-200 rounded-xl font-medium">
+            </div>
+          </div>
+
+          <div class="pt-2 flex gap-2">
+            <button type="button" class="btn-close-modal flex-1 py-2.5 bg-slate-100 text-slate-700 rounded-xl font-bold">取消</button>
+            <button type="submit" class="flex-1 py-2.5 bg-indigo-600 text-white rounded-xl font-bold shadow-sm hover:bg-indigo-700">記下這筆</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- 4. 行程設定 & 備份管理彈窗 -->
+    <div id="modal-settings" class="hidden fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 modal-backdrop">
+      <div class="bg-white rounded-3xl p-5 max-w-sm w-full space-y-4 shadow-2xl">
+        <div class="flex items-center justify-between">
+          <h3 class="text-base font-bold text-slate-900 flex items-center gap-1.5">
+            <i data-lucide="settings" class="w-4 h-4 text-indigo-600"></i>
+            行程管理與備份
+          </h3>
+          <button class="btn-close-modal p-1.5 text-slate-400 hover:text-slate-600 rounded-full hover:bg-slate-100">
+            <i data-lucide="x" class="w-5 h-5"></i>
+          </button>
+        </div>
+
+        <div class="space-y-2.5 text-xs">
+          <div class="p-3 bg-slate-50 rounded-2xl border border-slate-200 space-y-2">
+            <span class="font-bold text-slate-700 block">匯入行程 JSON 檔</span>
+            <input type="file" id="import-json-input" accept=".json" class="text-xs text-slate-500 file:mr-2 file:py-1.5 file:px-3 file:rounded-xl file:border-0 file:text-xs file:font-semibold file:bg-indigo-50 file:text-indigo-700 hover:file:bg-indigo-100">
+          </div>
+
+          <button id="btn-reset-data" class="w-full py-2.5 bg-rose-50 text-rose-600 border border-rose-200 rounded-xl font-bold hover:bg-rose-100 active:scale-95">
+            重設回 2026 中秋返鄉預設行程
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- 引用資料與主程式 -->
+  <script src="src/data/sampleTrip.js"></script>
+  <script src="src/app.js"></script>
+</body>
+</html>
